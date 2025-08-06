@@ -1,0 +1,34 @@
+{% if entries %}
+    <h2>Mentett oldalak</h2>
+    <table>
+        <thead>
+            <tr><th>URL</th><th>Mentés ideje</th><th>Részlet</th><th>Delete</th></tr>
+        </thead>
+        <tbody>
+        {% for id, url, content, created_at, is_truncated in entries %}
+            <tr>
+                <td><a href="/entry/{{ id }}"><strong>{{ url }}</strong></a></td>
+                <td>{{ created_at }}</td>
+                <td>
+                    <ul style="margin: 0; padding-left: 20px;">
+                        {% for line in content.split('\n')[:5] %}  {# csak az első 5 sor a részletben #}
+                            {% set parts = line.split(':', 1) %}
+                            <li><strong>{{ parts[0] }}</strong>: {{ parts[1] if parts|length > 1 else '' }}</li>
+                        {% endfor %}
+                    </ul>
+                    {% if is_truncated %}
+                        <a href="/entry/{{ id }}">Bővebben…</a>
+                    {% endif %}
+                </td>
+                <td>
+                    <form method="post" action="{{ url_for('delete_entry', entry_id=id) }}" style="display:inline;">
+                        <button type="submit" onclick="return confirm('Biztos törölni szeretnéd ezt a bejegyzést?');">🗑️</button>
+                    </form>
+                </td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+{% else %}
+    <p>Még nincs mentett oldal.</p>
+{% endif %}

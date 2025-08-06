@@ -1,0 +1,27 @@
+{% extends "base.html" %}
+
+{% block title %}Mentett oldalak{% endblock %}
+
+{% block content %}
+    <form method="get" action="{{ request.path }}">
+        <label>
+            <input type="text" name="q" placeholder="Search..." value="{{ query }}" style="width: 300px;">
+        </label>
+        <button type="submit">Search</button>
+        {% if query %}
+            <a href="{{ request.path }}" style="
+                margin-left: 10px;
+                padding: 6px 12px;
+                background-color: #eee;
+                color: #cc0000;
+                text-decoration: none;
+                border: 1px solid #ccc;
+                border-radius: 4px;
+            ">
+                ✖ Teljes lista
+            </a>
+        {% endif %}
+    </form>
+    <hr>
+    {% include "_list_partial.html" %}
+{% endblock %}

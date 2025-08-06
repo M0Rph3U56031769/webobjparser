@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="hu">
+<head>
+    <meta charset="UTF-8">
+    <title>{% block title %}WebObjParser{% endblock %}</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+        table { border-collapse: collapse; width: 100%; }
+        th, td { border: 1px solid #ccc; padding: 8px; text-align: left; vertical-align: top; }
+        th { background-color: #f5f5f5; }
+        a { color: #0077cc; text-decoration: none; }
+        a:hover { text-decoration: underline; }
+    </style>
+</head>
+<body>
+    <a href="/" class="btn btn-secondary mt-3">
+        <h1>{% block header %}Mentett oldalak kezelője{% endblock %}</h1>
+    </a>
+    <div>{% block content %}{% endblock %}</div>
+</body>
+</html>

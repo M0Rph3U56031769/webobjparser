@@ -1,0 +1,58 @@
+{% extends "base.html" %}
+
+{% block title %}Új URL mentése{% endblock %}
+
+{% block content %}
+
+    {% if request.args.get('error') %}
+    <script>
+        alert("Hiba történt az URL lekérésekor. Kérlek, ellenőrizd, hogy helyes címet adtál-e meg.");
+        if (window.history.replaceState) {
+            const url = new URL(window.location);
+            url.searchParams.delete('error');
+            window.history.replaceState({}, document.title, url.pathname + url.search);
+        }
+    </script>
+    {% endif %}
+
+    <form method="post">
+        <input type="text" name="url" placeholder="https://..." style="width: 300px;" required>
+        <button type="submit">Save</button>
+    </form>
+    <hr>
+    <form method="get" action="{{ request.path }}">
+        <input type="text" name="q" placeholder="Search..." value="{{ query }}" style="width: 300px;">
+        <button type="submit">Keresés</button>
+        {% if query %}
+            <a href="{{ request.path }}" style="
+                margin-left: 10px;
+                padding: 6px 12px;
+                background-color: #eee;
+                color: #cc0000;
+                text-decoration: none;
+                border: 1px solid #ccc;
+                border-radius: 4px;
+            ">
+                ✖ Teljes lista
+            </a>
+        {% endif %}
+    </form>
+    <hr>
+    {% include "_list_partial.html" %}
+    {% if request.args.get('exists') %}
+    <script>
+        const url = decodeURIComponent("{{ request.args.get('url') }}");
+        if (confirm(`Az URL (${url}) már létezik. Szeretnéd frissíteni az oldal tartalmát?`)) {
+            const form = document.querySelector("form");
+            const hidden = document.createElement("input");
+            hidden.type = "hidden";
+            hidden.name = "confirm_update";
+            hidden.value = "1";
+            form.appendChild(hidden);
+            form.submit();
+        } else {
+            document.querySelector('input[name="url"]').value = '';
+        }
+    </script>
+    {% endif %}
+{% endblock %}

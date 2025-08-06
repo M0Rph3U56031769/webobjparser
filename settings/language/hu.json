@@ -1,0 +1,10 @@
+{
+    "title": "Objektum Parzoló",
+    "network_error": "Hálózati hiba: ",
+    "query_keyword": "Kapott keresési kulcsszó:",
+    "fts_content": "\uD83D\uDCC4 FTS tartalom:",
+    "data_parsing_error": "❌ Adatfeldolgozási hiba:",
+    "found_entry_length": "Talált bejegyzések száma:",
+    "data_of_entry": "Bejegyzés adatai:",
+    "no_such_entry": "Nincs ilyen bejegyzés."
+}

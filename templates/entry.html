@@ -1,0 +1,55 @@
+{% extends "base.html" %}
+
+{% block title %}Mentett oldal részletei{% endblock %}
+
+{% block content %}
+    <h1 class="mb-4">Mentett oldal részletei</h1>
+        <table class="table table-bordered table-sm" style="margin: 0; border-collapse: collapse;">
+            {% for key, value in entry.items() %}
+                <tr>
+                    <th style="width: 100px; padding: 4px 6px; vertical-align: middle; text-align: center; font-weight: bold; background-color: #f8f9fa;">
+{{ key }}
+                    </th>
+                    <td style="padding: 0; vertical-align: top;">
+                        <div style="
+                            margin: 0;
+                            padding: 6px;
+                            max-height: {{ '390px' if key == 'CONTENT' else '50px' }};
+                            overflow-y: auto;
+                            word-break: break-word;
+                            {#white-space: pre-wrap;#}
+                            font-family: {{ 'monospace' if key == 'CONTENT' else 'sans-serif' }};
+                            background-color: {{ '#f9f9f9' if key == 'CONTENT' else '#fdfdfd' }};
+                            border: 1px solid #ccc;
+                        ">
+{% if key == 'URL' %}
+<a href="{{ value }}">{{ value }}</a>
+{% elif key == 'ID' %}
+{{ value }}
+{% elif key == 'CONTENT' %}
+<table class="table table-sm" style="margin:0;">
+    <tbody>
+    {% for line in value.split('\n') if ':' in line %}
+        {% set k, v = line.split(':', 1) %}
+        <tr>
+            <th style="width:120px; font-weight:bold;">{{ k.strip() }}</th>
+            <td>{{ v.strip() }}</td>
+        </tr>
+    {% endfor %}
+    </tbody>
+</table>
+
+{% else %}
+{{ value }}
+{% endif %}
+                        <script>
+                            console.log("value: ", {{ value|tojson }});
+                        </script>
+                        </div>
+                    </td>
+                </tr>
+            {% endfor %}
+        </table>
+
+    <a href="/" class="btn btn-secondary mt-3">⬅️ Vissza a főoldalra</a>
+{% endblock %}

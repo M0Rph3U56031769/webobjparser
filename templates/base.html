@@ -2,7 +2,7 @@
 <html lang="hu">
 <head>
     <meta charset="UTF-8">
-    <title>{% block title %}WebObjParser{% endblock %}</title>
+    <title>{% block title %}{{ t.title or 'WebObjParser' }}{% endblock %}</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter&display=swap" rel="stylesheet">
     <style>
         body {
@@ -17,7 +17,7 @@
 </head>
 <body>
     <a href="/" class="btn btn-secondary mt-3">
-        <h1>{% block header %}Mentett oldalak kezelője{% endblock %}</h1>
+        <h1>{% block header %}{{ t.title or 'Web Element Collector' }}{% endblock %}</h1>
     </a>
     <div>{% block content %}{% endblock %}</div>
 </body>

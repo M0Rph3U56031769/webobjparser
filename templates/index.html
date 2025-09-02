@@ -16,13 +16,17 @@
     {% endif %}
 
     <form method="post">
-        <input type="text" name="url" placeholder="https://..." style="width: 300px;" required>
+        <label>
+            <input type="text" name="url" placeholder="https://..." style="width: 300px;" required>
+        </label>
         <button type="submit">Save</button>
     </form>
     <hr>
     <form method="get" action="{{ request.path }}">
-        <input type="text" name="q" placeholder="Search..." value="{{ query }}" style="width: 300px;">
-        <button type="submit">Keresés</button>
+        <label>
+            <input type="text" name="q" placeholder="Search..." value="{{ query }}" style="width: 300px;">
+        </label>
+        <button type="submit">Search</button>
         {% if query %}
             <a href="{{ request.path }}" style="
                 margin-left: 10px;

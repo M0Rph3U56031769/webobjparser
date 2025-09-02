@@ -23,7 +23,7 @@
                             border: 1px solid #ccc;
                         ">
 {% if key == 'URL' %}
-<a href="{{ value }}">{{ value }}</a>
+<a href="{{ value }}" target="_blank" rel="noopener noreferrer">{{ value }}</a>
 {% elif key == 'ID' %}
 {{ value }}
 {% elif key == 'CONTENT' %}

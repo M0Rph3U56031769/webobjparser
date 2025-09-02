@@ -1,3 +1,5 @@
+from pprint import pprint
+
 from flask import Flask, request, render_template, redirect
 from requests.exceptions import RequestException
 from bs4 import BeautifulSoup
@@ -11,6 +13,15 @@ from modules.language import Language
 language = Language()
 
 app = Flask(__name__)
+
+# Inject language and translations into all templates
+@app.context_processor
+def inject_language():
+    return {
+        'language': language,           # the Language instance
+        't': language.language_data,    # the raw translations dict for simple access like {{ t.title }}
+        'translate': language.get_translation  # helper function: {{ translate('key') }}
+    }
 
 DB_NAME = "data.db"
 
@@ -68,7 +79,7 @@ def index():
             response.raise_for_status()
             html = response.text
         except RequestException as e:
-            print(f"{language.get_translation(key="network_error")} {e}")
+            print(f"{language.get_translation('network_error')} {e}")
             return redirect("/?error=1&url=" + url)
 
         try:
@@ -128,7 +139,7 @@ def index():
 
             return redirect("/")
         except Exception as e:
-            print(f"{language.get_translation("data_parsing_error")} {e}")
+            print(f"{language.get_translation('data_parsing_error')} {e}")
             return redirect("/?error=1&url=" + url)
 
     query = request.args.get("q", "").strip()
@@ -175,10 +186,10 @@ def list_entries():
             print(row)
         print("FTS5 status:")
         debug_rows = conn.execute("SELECT rowid, url FROM webpages_fts").fetchall()
-        for r in debug_rows:
-            print(r)
+        for row in debug_rows:
+            print(row)
     query = request.args.get("q", "").strip()
-    print(f"{language.get_translation("query_keyword")} '{query}'")
+    print(f"{language.get_translation('query_keyword')} '{query}'")
 
     with sqlite3.connect(DB_NAME) as conn:
         if query:
@@ -223,7 +234,8 @@ def show_entry(entry_id):
         # SQLite row: (id, url, content, created_at)
         keys = ["ID", "URL", "CONTENT", "CREATED AT"]
         entry = dict(zip(keys, row))
-        print(f"{language.get_translation('data_of_entry')} {entry.get('id')}")
+        pprint(entry)
+        print(f"{language.get_translation('data_of_entry')} {entry.get('ID')}")
     return render_template("entry.html", entry=entry)
 
 

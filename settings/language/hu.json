@@ -6,5 +6,6 @@
     "data_parsing_error": "❌ Adatfeldolgozási hiba:",
     "found_entry_length": "Talált bejegyzések száma:",
     "data_of_entry": "Bejegyzés adatai:",
-    "no_such_entry": "Nincs ilyen bejegyzés."
+    "no_such_entry": "Nincs ilyen bejegyzés.",
+    "more": "Bővebben…"
 }

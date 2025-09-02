@@ -1,13 +1,38 @@
 {% if entries %}
-    <h2>Mentett oldalak</h2>
-    <table>
+    <h2>Saved sites</h2>
+    <style>
+        /* Show triangle only on active sorted column header */
+        #entriesTable th[data-sortable] { position: relative; }
+        #entriesTable th[data-sortable][aria-sort="ascending"]::after {
+            content: "\25B2"; /* ▲ */
+            margin-left: 6px;
+            font-size: 0.8em;
+            color: #555;
+        }
+        #entriesTable th[data-sortable][aria-sort="descending"]::after {
+            content: "\25BC"; /* ▼ */
+            margin-left: 6px;
+            font-size: 0.8em;
+            color: #555;
+        }
+    </style>
+    <table id="entriesTable">
         <thead>
-            <tr><th>URL</th><th>Mentés ideje</th><th>Részlet</th><th>Delete</th></tr>
+            <tr>
+                <th style="width: 200px;" data-sortable="true" scope="col">URL</th>
+                <th data-sortable="true" scope="col">Mentés ideje</th>
+                <th data-sortable="true" scope="col">Details</th>
+                <th scope="col">Delete</th>
+            </tr>
         </thead>
         <tbody>
         {% for id, url, content, created_at, is_truncated in entries %}
             <tr>
-                <td><a href="/entry/{{ id }}"><strong>{{ url }}</strong></a></td>
+                <td style="width: 200px;">
+                    <a href="/entry/{{ id }}" title="{{ url }}" style="display:block; max-width:100%; line-height:1.2; max-height:3.6em; overflow:hidden; word-break: break-all; overflow-wrap: anywhere;">
+                        <strong>{{ url }}</strong>
+                    </a>
+                </td>
                 <td>{{ created_at }}</td>
                 <td>
                     <ul style="margin: 0; padding-left: 20px;">
@@ -17,7 +42,7 @@
                         {% endfor %}
                     </ul>
                     {% if is_truncated %}
-                        <a href="/entry/{{ id }}">Bővebben…</a>
+                        <a href="/entry/{{ id }}">More...</a>
                     {% endif %}
                 </td>
                 <td>
@@ -29,6 +54,79 @@
         {% endfor %}
         </tbody>
     </table>
+    <script>
+        (function() {
+            const table = document.getElementById('entriesTable');
+            if (!table) return;
+
+            const getCellText = (row, idx) => {
+                const cell = row.cells[idx];
+                if (!cell) return '';
+                return (cell.textContent || '').trim();
+            };
+
+            const parseForSort = (val) => {
+                if (val === null || val === undefined) return '';
+                const s = String(val).trim();
+                // Try number
+                const num = Number(s.replace(/,/g, ''));
+                if (!Number.isNaN(num) && s !== '') return { type: 'num', v: num };
+                // Try date
+                const d = Date.parse(s);
+                if (!Number.isNaN(d)) return { type: 'date', v: d };
+                return { type: 'str', v: s.toLowerCase() };
+            };
+
+            const compareValues = (a, b) => {
+                if (a.type !== b.type) {
+                    // Define priority: num > date > str for consistency
+                    const order = { num: 3, date: 2, str: 1 };
+                    return order[a.type] - order[b.type];
+                }
+                if (a.v < b.v) return -1;
+                if (a.v > b.v) return 1;
+                return 0;
+            };
+
+            const ths = table.tHead ? Array.from(table.tHead.rows[0].cells) : [];
+            ths.forEach((th, index) => {
+                const isSortable = th.hasAttribute('data-sortable');
+                if (!isSortable) {
+                    th.setAttribute('aria-sort', 'none');
+                    return; // skip delete or any non-sortable
+                }
+                th.style.cursor = 'pointer';
+                th.title = th.title || 'Sort';
+                th.setAttribute('aria-sort', 'none');
+                th.addEventListener('click', () => {
+                    const tbody = table.tBodies[0];
+                    const rows = Array.from(tbody.rows);
+
+                    // Determine current direction
+                    const current = th.getAttribute('aria-sort');
+                    const ascending = current !== 'ascending'; // toggle
+
+                    // Reset other headers
+                    ths.forEach(h => { if (h !== th) h.setAttribute('aria-sort', 'none'); });
+
+                    // Sort rows
+                    rows.sort((r1, r2) => {
+                        const t1 = parseForSort(getCellText(r1, index));
+                        const t2 = parseForSort(getCellText(r2, index));
+                        const cmp = compareValues(t1, t2);
+                        return ascending ? cmp : -cmp;
+                    });
+
+                    // Re-append in new order
+                    const frag = document.createDocumentFragment();
+                    rows.forEach(r => frag.appendChild(r));
+                    tbody.appendChild(frag);
+
+                    th.setAttribute('aria-sort', ascending ? 'ascending' : 'descending');
+                });
+            });
+        })();
+    </script>
 {% else %}
     <p>Még nincs mentett oldal.</p>
 {% endif %}

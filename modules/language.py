@@ -3,16 +3,14 @@ import json
 class Language:
 
     def __init__(self):
-        self.language_data = None
-
-    def init(self):
+        self.language_data: dict = {}
         self.load_language_file()
 
     def get_translation(self, key: str):
         try:
-            self.language_data = self.language_data.get(key)
+            return self.language_data.get(key)
         except KeyError as e:
-            print(e)
+            print(f"Key {key} not found: {e}")
             return f"ERROR: translation key (\"{key}\") not found!"
 
     def load_language_file(self):
@@ -22,10 +20,11 @@ class Language:
         :return: dictionary containing the language data
         """
 
-
         try:
             with open('settings/language/hu.json', 'r', encoding='utf-8') as file:
                 self.language_data = json.load(file)
+            print("Language file loaded")
+            print(self.language_data.get('data_of_entry'))
             return self.language_data
         except Exception as e:
             print(f"Error loading language file: {e}")
